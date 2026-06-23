@@ -47,7 +47,7 @@ def main():
                     motivo = status.state.waiting.reason
                     break
 
-            # Se o pod fits os critérios, ele é eliminado
+
             if deve_deletar:
                 print(f"Deletando pod '{pod_name}' no namespace '{namespace}' (Motivo: {motivo})...")
                 try:
