@@ -1,0 +1,36 @@
+name: Executar Web Scraping
+
+on: 
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # para rodar manualmente 
+
+jobs:
+  delete_pod_erro:
+    runs-on: ubuntu-lastest
+
+    steps:
+      - name: Checkcout do código
+        uses: action/checkout@v4
+
+      - name: Configurar Pyhton
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        working-directory: ./scripts/pod_erro.py
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > ~/.kube/config
+          pip install uv 
+          uv pip install -r pyproject.toml --system
+
+      - name: Rodar Automação
+        working-directory: ./script/
+        run: python src/scraper.py
+
+      - name: Executar Script de Limpeza
+        run: pyhton scripts/delete_failed_pods.py
+
+        
